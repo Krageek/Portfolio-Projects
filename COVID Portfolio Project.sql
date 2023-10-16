@@ -1,3 +1,5 @@
+-- Queries exploring Covid Data till May 2021
+
 Select *
 From PortfolioProject..CovidDeaths
 Where continent is not null
@@ -128,7 +130,7 @@ Select *
 From PercentPopulationVaccinated;
 
 
--- Queries used for Tableau Project 1
+-- Queries used for Tableau Project 1 on older Covid data till May 2021
 
 Select SUM(cast(new_cases as int)) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as DeathPercentage
 From PortfolioProject..CovidDeaths
@@ -164,7 +166,7 @@ Group by Location, Population, date
 order by PercentPopulationInfected desc
 
 
--- Queries for Tableau Project 2
+-- Queries based on updated Covid data till the latest available date (Oct 2023)
 
 Select *
 From PortfolioProject..CovidData
@@ -215,7 +217,7 @@ Order by 1,2;
 
 
 
--- Tableau Queries for my own dashboard
+-- Tableau Queries for 2nd COVID dashboard
 
 -- Total Cases vs Total Deaths as Percentage
 Select location, MAX(cast(total_cases as int)) as TotalCases, MAX(cast(total_deaths as int)) as TotalDeaths, MAX(cast(total_deaths as float))/MAX(cast(total_cases as float)) *100 as TotalDeathsPerc
