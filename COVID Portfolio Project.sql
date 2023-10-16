@@ -106,7 +106,8 @@ Join PortfolioProject..CovidVaccinations vac
 --Where dea.continent is not null
 --Order By 2,3;
 
-Select *, (RollingPeopleVaccinated/Population)*100
+
+Select *--, (RollingPeopleVaccinated/Population)*100
 From #PercentPopulationVaccinated
 
 
@@ -125,3 +126,139 @@ Where dea.continent is not null
 
 Select *
 From PercentPopulationVaccinated;
+
+
+-- Queries used for Tableau Project 1
+
+Select SUM(cast(new_cases as int)) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as DeathPercentage
+From PortfolioProject..CovidDeaths
+--Where location like '%states%'
+where continent is not null 
+--Group By date
+order by 1,2
+
+
+
+
+Select location, SUM(cast(new_deaths as int)) as TotalDeathCount
+From PortfolioProject..CovidDeaths
+--Where location like '%states%'
+Where continent is null 
+and location not in ('World', 'European Union', 'International')
+Group by location
+order by TotalDeathCount desc
+
+Select Location, Population, MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+From PortfolioProject..CovidDeaths
+--Where location like '%states%'
+Group by Location, Population
+order by PercentPopulationInfected desc
+
+
+
+
+Select Location, Population,date, MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+From PortfolioProject..CovidDeaths
+--Where location like '%states%'
+Group by Location, Population, date
+order by PercentPopulationInfected desc
+
+
+-- Queries for Tableau Project 2
+
+Select *
+From PortfolioProject..CovidData
+Order By location, date;
+
+
+
+-- Total cases vs New cases for Canada
+
+Select location, date, new_cases, total_cases
+From PortfolioProject..CovidData
+Where location like 'Canada'
+Order By 2;
+
+-- Total cases vs ICU patients for Canada
+
+Select location, date, new_cases, total_cases, icu_patients
+From PortfolioProject..CovidData
+Where location like 'Canada'
+Order By 2;
+
+--Totat deaths vs Cases as a Percentage
+
+Select location, date, total_cases, total_deaths, (cast(total_deaths as float)/cast(total_cases as float)) * 100 as DeathPerc
+From PortfolioProject..CovidData
+--Where location like 'Canada'
+Order By 1,2;
+
+-- Total number of cases and Total number of tests in Canada
+
+Select location, date, total_cases, total_tests
+From PortfolioProject..CovidData
+Where location like 'Canada'
+Order by 1,2;
+
+
+--Select location, MAX(cast(total_deaths as int))
+--From PortfolioProject..CovidData
+--Where location like 'Canada'
+--Group By location
+----Order By 2;
+
+--Select location, Max(cast(total_deaths_per_million as float))
+--From PortfolioProject..CovidData
+----Where location like 'India'
+--Group By location
+--Order by 2 DESC;
+
+
+
+-- Tableau Queries for my own dashboard
+
+-- Total Cases vs Total Deaths as Percentage
+Select location, MAX(cast(total_cases as int)) as TotalCases, MAX(cast(total_deaths as int)) as TotalDeaths, MAX(cast(total_deaths as float))/MAX(cast(total_cases as float)) *100 as TotalDeathsPerc
+From PortfolioProject..CovidData
+--Where location like 'India'
+Group By location
+Order By 4;
+
+-- Total Population that was infected as a percentage
+Select Location, MAX(population) as Population, MAX(cast(total_cases as int)) as HighestCases, (MAX(cast(total_cases as int))/MAX(population)) * 100 as PopulationInfectedPercentage
+From PortfolioProject..CovidData
+Group By location
+Order By 1;
+
+-- Number of patients in the hospitals across 4 countries
+Select location, date, total_cases, icu_patients, hosp_patients, hosp_patients_per_million
+From PortfolioProject..CovidData
+Where location in ('United States','Canada', 'United Kingdom', 'Australia')
+Order by 1,2;
+
+--Select location, MAX(cast(total_cases as int)), MAX(cast(total_deaths as int))
+--From PortfolioProject..CovidData
+--Where location like 'India'
+--Group By location;
+
+-- Total Vaccinations vs Death rate for Canada
+Select location, date, total_cases, total_deaths, total_vaccinations, cast(total_deaths as float)/cast(total_cases as float) *100 as FatalityRate
+From PortfolioProject..CovidData
+Where location like 'Canada'
+Order By 1,2;
+
+--Total Cases vs Hospital Patients as a Percentage in Canada (Unused)
+Select location, date, total_cases, hosp_patients, cast(hosp_patients as float)/cast(total_cases as float) * 100 as CovidPatientsPercentage
+From PortfolioProject..CovidData
+Where location like 'Canada'
+Order by 2;
+
+-- Total Cases vs Hospital Patients as a Percentage in Canada while showing running maximum COVID patients vs Total Cases percentage value in Canada (Unused)
+Select location, date, total_cases, hosp_patients, MAX(cast(hosp_patients as float)/cast(total_cases as float) * 100) Over (Partition By location Order By location, date) as MaxCovidPatientsPercentage
+From PortfolioProject..CovidData
+Where location like 'Canada'
+--Order by 2;
+
+
+
+
